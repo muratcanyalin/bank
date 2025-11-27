@@ -261,18 +261,26 @@ curl http://localhost:3001/health
 curl http://localhost:3001/api/test-db
 ```
 
-## 📝 Son Güncellemeler
+## 📝 Sürüm Geçmişi
 
-### v1.1.0 (Son Güncellemeler)
-- ✅ Dashboard'a şube bilgileri eklendi
-- ✅ İşlem geçmişine filtreleme özelliği eklendi
-- ✅ İşlem geçmişine export (PDF) özelliği eklendi
-- ✅ Her işlem için dekont alma özelliği eklendi
-- ✅ Faturalar sayfasına otomatik ödeme talimatı sistemi eklendi
-- ✅ Faturalar localStorage ile kalıcı hale getirildi
-- ✅ Fatura ödeme hesap seçimi düzeltildi
-- ✅ Çalışan paneli veri yapısı düzeltildi
-- ✅ Rate limiting hata mesajları iyileştirildi
+### v1.0.0 (Initial Release - December 2024)
+
+**İlk stabil sürüm** - Tüm temel bankacılık özellikleri ve güvenlik katmanları ile.
+
+#### Öne Çıkan Özellikler
+- ✅ Dashboard (şube bilgileri ile)
+- ✅ İşlem geçmişi (filtreleme, export, dekont)
+- ✅ Faturalar yönetimi (otomatik ödeme talimatı)
+- ✅ Para transferi
+- ✅ Hesap yönetimi
+- ✅ Çalışan paneli
+- ✅ Kapsamlı güvenlik katmanları
+- ✅ MFA desteği
+- ✅ Audit logging
+
+Detaylı sürüm notları için [RELEASE_NOTES.md](RELEASE_NOTES.md) ve [CHANGELOG.md](CHANGELOG.md) dosyalarına bakabilirsiniz.
+
+**Current Version:** 1.0.0
 
 ## 📝 Lisans
 

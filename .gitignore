@@ -5,11 +5,13 @@ node_modules/
 
 # Testing
 coverage/
+*.log
 
 # Production
 build/
 dist/
-*.log
+.next/
+out/
 
 # Environment variables
 .env
@@ -36,23 +38,14 @@ Thumbs.db
 # Prisma
 backend/prisma/migrations/
 
-# Next.js
-frontend/.next/
-frontend/out/
+# Expo
+.expo/
+.expo-shared/
 
-# React Native
-mobile/.expo/
-mobile/.expo-shared/
-mobile/ios/
-mobile/android/
-mobile/.gradle/
-mobile/build/
+# TypeScript
+*.tsbuildinfo
 
-# Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-
+# Misc
+.cache/
+.temp/
+*.tmp

@@ -192,9 +192,11 @@ curl http://localhost:3001/health
 curl http://localhost:3001/api/test-db
 ```
 
-## Son Güncellemeler
+## Sürüm Bilgisi
 
-### v1.1.0
+**Current Version:** 1.0.0
+
+### v1.0.0 (Initial Release)
 - ✅ İşlem geçmişi filtreleme desteği
 - ✅ Fatura sorgulama ve ödeme API'leri
 - ✅ Müşteri listesi API'si (çalışanlar için)
