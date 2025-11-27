@@ -99,11 +99,43 @@ Server `http://localhost:3001` adresinde çalışacak.
 - `GET /api/accounts` - Kullanıcının hesaplarını listele (account:read)
 - `GET /api/accounts/:id` - Hesap detayları (ABAC - ownership check)
 - `POST /api/accounts` - Yeni hesap oluştur (account:create)
+- `PATCH /api/accounts/:id` - Hesap güncelle (account:modify)
+- `POST /api/accounts/:id/deactivate` - Hesap deaktif et
+
+### Balances
+- `GET /api/balances` - Tüm bakiyeler
+- `GET /api/balances/account/:id` - Hesap bakiyesi
+- `GET /api/balances/account/:id/summary` - Hesap özeti
+
+### Transactions
+- `GET /api/transactions` - İşlem geçmişi (query params: type, status, startDate, endDate, page, limit)
+- `GET /api/transactions/:id` - İşlem detayları
+- `POST /api/transactions/:id/cancel` - İşlem iptal et
+
+### Transfers
+- `POST /api/transfers` - Para transferi
+
+### Bills
+- `GET /api/bills` - Kullanıcının faturaları
+- `GET /api/bills/providers` - Fatura sağlayıcıları (query params: city, type)
+- `POST /api/bills/query` - Fatura sorgula
 
 ### Customers (Employee Only - RBAC Protected)
 - `GET /api/customers` - Tüm müşterileri listele (customer:list - EMPLOYEE only)
 - `GET /api/customers/:id` - Müşteri detayları (customer:view - EMPLOYEE only)
 - `PATCH /api/customers/:id` - Müşteri bilgilerini güncelle (customer:modify - EMPLOYEE only)
+
+### Audit Logs
+- `GET /api/audit-logs` - Audit logları
+- `GET /api/audit-logs/stats` - İstatistikler
+- `GET /api/audit-logs/me` - Kullanıcının logları
+- `GET /api/audit-logs/customer-access` - Müşteri erişim logları
+- `GET /api/audit-logs/transfers` - Transfer logları
+
+### JIT Access
+- `POST /api/jit/request` - JIT access talep et
+- `POST /api/jit/use` - JIT access kullan
+- `POST /api/jit/revoke` - JIT access iptal et
 
 ## RBAC & ABAC
 
@@ -115,6 +147,7 @@ Server `http://localhost:3001` adresinde çalışacak.
 ### Permissions
 - `account:read` - Hesap görüntüleme
 - `account:create` - Hesap oluşturma
+- `account:modify` - Hesap güncelleme
 - `transfer:create` - Para transferi
 - `customer:view` - Müşteri görüntüleme (EMPLOYEE)
 - `customer:modify` - Müşteri düzenleme (EMPLOYEE)
@@ -126,6 +159,21 @@ Server `http://localhost:3001` adresinde çalışacak.
 - Çalışanlar müşteri verilerini görebilir (customer:view permission ile)
 - Yüksek tutarlı transferler sadece iş saatlerinde yapılabilir (örnek policy)
 
+## Security Features
+
+### Rate Limiting
+- General API: 100 requests per 15 minutes per IP
+- Authentication: 5 requests per 15 minutes per IP
+- Transfer: 10 transfers per hour per user
+
+### Anti-Bruteforce
+- 5 başarısız denemeden sonra 15 dakika blok
+- IP bazlı takip
+
+### Error Handling
+- Rate limiting hataları için iyileştirilmiş mesajlar
+- Güvenlik odaklı hata yanıtları
+
 ## Prisma Studio
 
 Veritabanını görselleştirmek için:
@@ -133,3 +181,22 @@ Veritabanını görselleştirmek için:
 ```bash
 npm run prisma:studio
 ```
+
+## Testing
+
+```bash
+# Health check
+curl http://localhost:3001/health
+
+# Database test
+curl http://localhost:3001/api/test-db
+```
+
+## Son Güncellemeler
+
+### v1.1.0
+- ✅ İşlem geçmişi filtreleme desteği
+- ✅ Fatura sorgulama ve ödeme API'leri
+- ✅ Müşteri listesi API'si (çalışanlar için)
+- ✅ Rate limiting hata mesajları iyileştirildi
+- ✅ Hesap şube bilgileri desteği

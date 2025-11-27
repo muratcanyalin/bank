@@ -47,17 +47,28 @@ CREATE DATABASE banking_db;
 `backend` klasöründe `.env` dosyası oluşturun:
 
 ```env
+# Database
 DATABASE_URL="postgresql://postgres:password@localhost:5432/banking_db?schema=public"
+
+# JWT
 JWT_SECRET="change-this-to-a-random-secret-key-min-32-chars"
 JWT_REFRESH_SECRET="change-this-to-another-random-secret-key-min-32-chars"
 JWT_EXPIRES_IN="15m"
 JWT_REFRESH_EXPIRES_IN="7d"
+
+# Server
 PORT=3001
 NODE_ENV=development
+
+# Redis (opsiyonel)
 REDIS_HOST=localhost
 REDIS_PORT=6379
 REDIS_PASSWORD=
+
+# MFA
 MFA_ISSUER="Mini Banking Platform"
+
+# CORS
 FRONTEND_URL=http://localhost:3000
 MOBILE_URL=http://localhost:19006
 ```
@@ -72,7 +83,19 @@ npm run prisma:generate
 npm run prisma:migrate
 ```
 
-### 6. Frontend Yapılandırması (Opsiyonel)
+### 6. Seed Database (Roles & Permissions)
+
+```bash
+cd backend
+npm run seed
+```
+
+Bu komut şunları oluşturur:
+- **Roles**: CUSTOMER, EMPLOYEE, ADMIN
+- **Permissions**: account:read, transfer:create, customer:view, vb.
+- **Role-Permission mappings**: Her role için uygun izinler
+
+### 7. Frontend Yapılandırması
 
 `frontend` klasöründe `.env.local` dosyası oluşturun:
 
@@ -80,21 +103,38 @@ npm run prisma:migrate
 NEXT_PUBLIC_API_URL=http://localhost:3001
 ```
 
-### 7. Uygulamaları Başlatın
+### 8. Mobile Yapılandırması (Opsiyonel)
+
+`mobile` klasöründe `.env` dosyası oluşturun:
+
+```env
+EXPO_PUBLIC_API_URL=http://localhost:3001
+```
+
+**Not:** Emulator/Simulator için `localhost` kullanabilirsiniz.
+Gerçek cihaz için bilgisayarınızın IP adresini kullanın (örn: `http://192.168.1.100:3001`).
+
+### 9. Uygulamaları Başlatın
 
 **Terminal 1 - Backend:**
 ```bash
 npm run dev:backend
+# veya
+cd backend && npm run dev
 ```
 
 **Terminal 2 - Frontend:**
 ```bash
 npm run dev:frontend
+# veya
+cd frontend && npm run dev
 ```
 
 **Terminal 3 - Mobile (opsiyonel):**
 ```bash
 npm run dev:mobile
+# veya
+cd mobile && npm start
 ```
 
 ## Test
@@ -102,6 +142,23 @@ npm run dev:mobile
 - Backend: http://localhost:3001/health
 - Frontend: http://localhost:3000
 - Database Test: http://localhost:3001/api/test-db
+
+## Yeni Özellikler
+
+### İşlem Geçmişi
+- ✅ Gelişmiş filtreleme (tür, durum, tarih aralığı)
+- ✅ Export özelliği (PDF formatında)
+- ✅ Her işlem için dekont alma
+- ✅ Önizleme penceresi
+
+### Faturalar
+- ✅ Fatura sorgulama ve ödeme
+- ✅ Otomatik ödeme talimatı sistemi
+- ✅ localStorage ile kalıcılık (sayfa yenilendiğinde faturalar korunur)
+- ✅ Otomatik ödeme yönetimi (aktif/pasif)
+
+### Dashboard
+- ✅ Hesaplarda şube bilgileri gösterimi
 
 ## Sorun Giderme
 
@@ -124,12 +181,18 @@ npx prisma migrate reset  # Dikkat: Tüm verileri siler!
 npx prisma migrate dev
 ```
 
+### Rate Limiting Hatası
+
+Eğer "Please try again in 15 minutes" hatası alıyorsanız:
+- Bu güvenlik önlemi normaldir
+- Birkaç dakika bekleyip tekrar deneyin
+- Hata mesajları iyileştirilmiştir ve daha açıklayıcıdır
+
 ## Sonraki Adımlar
 
-Phase 1 tamamlandı! Şimdi Phase 2'ye geçebilirsiniz:
-- UI/UX Design
-- Authentication System
-- RBAC & ABAC
-- vb.
-
-
+Tüm fazlar tamamlandı! Şimdi şu özellikleri kullanabilirsiniz:
+- ✅ Dashboard (şube bilgileri ile)
+- ✅ İşlem geçmişi (filtreleme, export, dekont)
+- ✅ Faturalar (otomatik ödeme talimatı)
+- ✅ Çalışan paneli
+- ✅ Güvenlik özellikleri

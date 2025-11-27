@@ -113,6 +113,7 @@ cd mobile && npm start
 - [Banking Core](backend/BANKING_CORE.md) - Bankacılık işlemleri
 - [Mobile README](mobile/README.md) - Mobil uygulama rehberi
 - [Setup Guide](SETUP.md) - Detaylı kurulum rehberi
+- [Quick Start](START.md) - Hızlı başlangıç rehberi
 
 ## 🔐 Güvenlik Özellikleri
 
@@ -174,12 +175,17 @@ cd mobile && npm start
 - `GET /api/balances/account/:id/summary` - Hesap özeti
 
 ### Transactions
-- `GET /api/transactions` - İşlem geçmişi
+- `GET /api/transactions` - İşlem geçmişi (filtreleme destekli)
 - `GET /api/transactions/:id` - İşlem detayları
 - `POST /api/transactions/:id/cancel` - İşlem iptal et
 
 ### Transfers
 - `POST /api/transfers` - Para transferi
+
+### Bills
+- `GET /api/bills` - Kullanıcının faturaları
+- `GET /api/bills/providers` - Fatura sağlayıcıları
+- `POST /api/bills/query` - Fatura sorgula
 
 ### Customers (Employee Only)
 - `GET /api/customers` - Müşteri listesi
@@ -202,11 +208,25 @@ cd mobile && npm start
 
 ### Web Application
 - ✅ Modern, responsive UI
-- ✅ Dashboard
+- ✅ Dashboard (şube bilgileri ile)
 - ✅ Account Management
 - ✅ Money Transfer
-- ✅ Transaction History
+- ✅ Transaction History (filtreleme, export, dekont)
+- ✅ Bills Management (otomatik ödeme talimatı)
 - ✅ Employee Panel
+
+### Transaction History Features
+- ✅ Gelişmiş filtreleme (tür, durum, tarih aralığı)
+- ✅ Export özelliği (PDF)
+- ✅ Her işlem için dekont alma
+- ✅ Önizleme penceresi
+
+### Bills Management Features
+- ✅ Fatura sorgulama
+- ✅ Fatura ödeme
+- ✅ Otomatik ödeme talimatı sistemi
+- ✅ localStorage ile kalıcılık
+- ✅ Otomatik ödeme yönetimi (aktif/pasif)
 
 ### Mobile Application
 - ✅ Native mobile experience
@@ -222,6 +242,7 @@ cd mobile && npm start
 - ✅ Comprehensive audit logging
 - ✅ Zero-Trust architecture
 - ✅ Rate limiting & anti-bruteforce
+- ✅ İyileştirilmiş hata mesajları
 
 ## 🧪 Testing
 
@@ -239,6 +260,19 @@ curl http://localhost:3001/health
 # Database connection test
 curl http://localhost:3001/api/test-db
 ```
+
+## 📝 Son Güncellemeler
+
+### v1.1.0 (Son Güncellemeler)
+- ✅ Dashboard'a şube bilgileri eklendi
+- ✅ İşlem geçmişine filtreleme özelliği eklendi
+- ✅ İşlem geçmişine export (PDF) özelliği eklendi
+- ✅ Her işlem için dekont alma özelliği eklendi
+- ✅ Faturalar sayfasına otomatik ödeme talimatı sistemi eklendi
+- ✅ Faturalar localStorage ile kalıcı hale getirildi
+- ✅ Fatura ödeme hesap seçimi düzeltildi
+- ✅ Çalışan paneli veri yapısı düzeltildi
+- ✅ Rate limiting hata mesajları iyileştirildi
 
 ## 📝 Lisans
 
