@@ -1,0 +1,24 @@
+{
+  "name": "mini-banking-platform",
+  "version": "1.0.0",
+  "description": "Mini Banking Platform - Monorepo",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend",
+    "mobile"
+  ],
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:mobile": "cd mobile && npm run start",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install && cd ../mobile && npm install"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
+
+

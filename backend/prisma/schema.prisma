@@ -1,0 +1,239 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== AUTHENTICATION & AUTHORIZATION ====================
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String
+  firstName     String
+  lastName      String
+  phoneNumber   String?
+  address       String?
+  city          String?
+  postalCode    String?
+  isActive      Boolean   @default(true)
+  emailVerified Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  roles         UserRole[]
+  accounts      Account[]
+  sessions      Session[]
+  auditLogs     AuditLog[]
+  mfaSecret     MfaSecret?
+  refreshTokens RefreshToken[]
+
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique // CUSTOMER, EMPLOYEE, ADMIN
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  users       UserRole[]
+  permissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  name        String   @unique // e.g., "account:read", "transfer:create", "customer:view"
+  resource    String   // e.g., "account", "transfer", "customer"
+  action      String   // e.g., "read", "create", "update", "delete"
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  roles       RolePermission[]
+
+  @@map("permissions")
+}
+
+model UserRole {
+  id        String   @id @default(uuid())
+  userId    String
+  roleId    String
+  createdAt DateTime @default(now())
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@map("user_roles")
+}
+
+model RolePermission {
+  id           String   @id @default(uuid())
+  roleId       String
+  permissionId String
+  createdAt    DateTime @default(now())
+
+  // Relations
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+// ==================== SESSION & TOKEN MANAGEMENT ====================
+
+model Session {
+  id           String   @id @default(uuid())
+  userId       String
+  token        String   @unique
+  refreshToken String   @unique
+  deviceInfo   String?  // Device fingerprint
+  ipAddress    String?
+  userAgent    String?
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  lastActivity DateTime @default(now())
+
+  // Relations
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@map("sessions")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  revoked   Boolean  @default(false)
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@map("refresh_tokens")
+}
+
+model MfaSecret {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  secret    String
+  enabled   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("mfa_secrets")
+}
+
+// ==================== BANKING CORE ====================
+
+model Account {
+  id            String   @id @default(uuid())
+  userId        String
+  accountNumber String   @unique
+  accountType   String   // CHECKING, SAVINGS, CREDIT
+  balance       Decimal  @default(0) @db.Decimal(15, 2)
+  currency      String   @default("TRY")
+  branchCode    String?  // Şube kodu
+  branchName    String?  // Şube adı
+  isActive      Boolean  @default(true)
+  isFrozen      Boolean  @default(false) // Hesap dondurma durumu
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactionsFrom Transaction[] @relation("TransactionFrom")
+  transactionsTo   Transaction[] @relation("TransactionTo")
+
+  @@index([userId])
+  @@index([accountNumber])
+  @@index([branchCode])
+  @@map("accounts")
+}
+
+model Transaction {
+  id              String   @id @default(uuid())
+  fromAccountId   String?
+  toAccountId     String
+  amount          Decimal  @db.Decimal(15, 2)
+  currency        String   @default("TRY")
+  type            String   // TRANSFER, DEPOSIT, WITHDRAWAL, PAYMENT
+  status          String   @default("PENDING") // PENDING, COMPLETED, FAILED, CANCELLED
+  description     String?
+  referenceNumber String   @unique
+  metadata        Json?    // Additional transaction data
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  fromAccount     Account? @relation("TransactionFrom", fields: [fromAccountId], references: [id])
+  toAccount       Account  @relation("TransactionTo", fields: [toAccountId], references: [id])
+
+  @@index([fromAccountId])
+  @@index([toAccountId])
+  @@index([referenceNumber])
+  @@index([createdAt])
+  @@map("transactions")
+}
+
+// ==================== AUDIT & SECURITY ====================
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  userId      String?
+  action      String   // LOGIN, LOGOUT, TRANSFER, VIEW_CUSTOMER, etc.
+  resource    String?  // Which resource was accessed
+  resourceId  String?  // ID of the resource
+  ipAddress   String?
+  userAgent   String?
+  deviceInfo  String?
+  status      String   // SUCCESS, FAILED, BLOCKED
+  metadata    Json?    // Additional context
+  createdAt   DateTime @default(now())
+
+  // Relations
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model RateLimit {
+  id        String   @id @default(uuid())
+  identifier String   // IP, userId, etc.
+  endpoint  String
+  count     Int      @default(1)
+  windowStart DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([identifier, endpoint, windowStart])
+  @@index([identifier])
+  @@map("rate_limits")
+}
+
