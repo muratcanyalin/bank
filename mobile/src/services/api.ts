@@ -180,11 +180,38 @@ export const transactionAPI = {
 export const transferAPI = {
   create: async (data: {
     fromAccountId: string;
-    toAccountId: string;
+    toAccountId?: string;
+    toAccountIdentifier?: string;
     amount: number;
     description?: string;
   }) => {
     const response = await api.post('/api/transfers', data);
+    return response.data;
+  },
+};
+
+// Bills API
+export const billsAPI = {
+  getProviders: async (city?: string, type?: string) => {
+    const params: any = {};
+    if (city) params.city = city;
+    if (type) params.type = type;
+    const response = await api.get('/api/bills/providers', { params });
+    return response.data;
+  },
+
+  query: async (data: {
+    city: string;
+    type: string;
+    provider: string;
+    subscriberNumber: string;
+  }) => {
+    const response = await api.post('/api/bills/query', data);
+    return response.data;
+  },
+
+  getUserBills: async () => {
+    const response = await api.get('/api/bills');
     return response.data;
   },
 };

@@ -87,16 +87,28 @@ export default function DashboardScreen({ navigation }: any) {
             }
           >
             <View style={styles.accountHeader}>
-              <Text style={styles.accountName}>
-                {account.accountType === 'CHECKING'
-                  ? '💳 Vadesiz'
-                  : account.accountType === 'SAVINGS'
-                  ? '🏦 Vadeli'
-                  : '💳 Kredi'}
-              </Text>
-              <Text style={styles.accountNumber}>
-                ****{account.accountNumber.slice(-4)}
-              </Text>
+              <View style={styles.accountInfo}>
+                <Text style={styles.accountName}>
+                  {account.accountType === 'CHECKING'
+                    ? '💳 Vadesiz'
+                    : account.accountType === 'SAVINGS'
+                    ? '🏦 Vadeli'
+                    : '💳 Kredi'}
+                </Text>
+                <Text style={styles.accountNumber}>
+                  ****{account.accountNumber.slice(-4)}
+                </Text>
+                {account.branchName && (
+                  <Text style={styles.branchInfo}>
+                    Şube: {account.branchName}
+                  </Text>
+                )}
+                {account.branchCode && !account.branchName && (
+                  <Text style={styles.branchInfo}>
+                    Şube: {account.branchCode}
+                  </Text>
+                )}
+              </View>
             </View>
             <Text style={styles.accountBalance}>
               {Number(account.balance).toLocaleString('tr-TR', {
@@ -129,10 +141,10 @@ export default function DashboardScreen({ navigation }: any) {
 
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={() => navigation.navigate('Accounts')}
+            onPress={() => navigation.navigate('Bills')}
           >
-            <Text style={styles.actionIcon}>💳</Text>
-            <Text style={styles.actionText}>Hesaplar</Text>
+            <Text style={styles.actionIcon}>📄</Text>
+            <Text style={styles.actionText}>Faturalar</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -206,14 +218,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 10,
   },
+  accountInfo: {
+    flex: 1,
+  },
   accountName: {
     fontSize: 16,
     fontWeight: '600',
     color: '#333',
+    marginBottom: 4,
   },
   accountNumber: {
     fontSize: 14,
     color: '#666',
+    marginBottom: 2,
+  },
+  branchInfo: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 2,
   },
   accountBalance: {
     fontSize: 20,

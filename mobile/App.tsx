@@ -6,6 +6,7 @@ import LoginScreen from './src/screens/LoginScreen';
 import DashboardScreen from './src/screens/DashboardScreen';
 import TransferScreen from './src/screens/TransferScreen';
 import TransactionsScreen from './src/screens/TransactionsScreen';
+import BillsScreen from './src/screens/BillsScreen';
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
 
 const Stack = createNativeStackNavigator();
@@ -29,6 +30,7 @@ function AppNavigator() {
             <Stack.Screen name="Dashboard" component={DashboardScreen} />
             <Stack.Screen name="Transfer" component={TransferScreen} />
             <Stack.Screen name="Transactions" component={TransactionsScreen} />
+            <Stack.Screen name="Bills" component={BillsScreen} />
           </>
         ) : (
           <Stack.Screen name="Login" component={LoginScreen} />
